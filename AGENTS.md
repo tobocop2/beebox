@@ -17,6 +17,7 @@ floop init
 - opencode - OpenCode
 - codex - OpenAI Codex  
 - goose - Goose
+- gemini - Google Gemini
 
 ## Usage
 
