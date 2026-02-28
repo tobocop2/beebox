@@ -1,5 +1,6 @@
 name: codex
 command: codex
+install: "npm install -g @openai/codex"
 tools:
   - beads
   - floop

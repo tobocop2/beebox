@@ -11,7 +11,7 @@ while [[ $# -gt 0 ]]; do
             TOOLS="$2"
             shift 2
             ;;
-        claude|opencode|codex|goose)
+        claude|opencode|codex|goose|gemini)
             AGENT="$1"
             shift
             break
@@ -33,11 +33,30 @@ install_tool() {
     local install_cmd=$(grep "^install:" "$config" | sed 's/^install: *//')
     local verify_cmd=$(grep "^verify:" "$config" | sed 's/^verify: *//')
     
-    if eval "$verify_cmd" >/dev/null 2>&1; then
+    if [[ -n "$verify_cmd" ]] && eval "$verify_cmd" >/dev/null 2>&1; then
         return 0
     fi
     
     eval "$install_cmd"
+}
+
+install_agent() {
+    local agent="$1"
+    local config="$SCRIPT_DIR/agents/${agent}.yml"
+    
+    if [[ ! -f "$config" ]]; then
+        echo "Error: No config found for agent: $agent" >&2
+        return 1
+    fi
+    
+    local command=$(grep "^command:" "$config" | sed 's/^command: *//')
+    local install_cmd=$(grep "^install:" "$config" | sed 's/^install: *//')
+    
+    if [[ -n "$install_cmd" ]]; then
+        eval "$install_cmd"
+    fi
+    
+    exec "$command" "$@"
 }
 
 if [[ -n "$TOOLS" ]]; then
@@ -48,7 +67,7 @@ if [[ -n "$TOOLS" ]]; then
 fi
 
 if [[ -n "$AGENT" ]]; then
-    exec "$AGENT" "$@"
+    install_agent "$AGENT" "$@"
 else
     exec "$@"
 fi

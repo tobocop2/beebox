@@ -3,6 +3,13 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+ensure_image() {
+    if ! docker image inspect sandbox:latest >/dev/null 2>&1; then
+        echo "Building sandbox container..." >&2
+        docker build -t sandbox "$SCRIPT_DIR"
+    fi
+}
+
 usage() {
     echo "Usage: $0 [OPTIONS] AGENT [AGENT_ARGS]"
     echo ""
@@ -15,6 +22,7 @@ usage() {
     echo "  opencode  OpenCode"
     echo "  codex     OpenAI Codex"
     echo "  goose     Goose"
+    echo "  gemini    Google Gemini"
     exit 1
 }
 
@@ -50,7 +58,7 @@ fi
 AGENT_CONFIG="$SCRIPT_DIR/agents/${AGENT}.yml"
 if [[ ! -f "$AGENT_CONFIG" ]]; then
     echo "Error: Unknown agent: $AGENT"
-    echo "Available agents: claude, opencode, codex, goose"
+    echo "Available agents: claude, opencode, codex, goose, gemini"
     exit 1
 fi
 
@@ -58,8 +66,10 @@ CONFIG="$SCRIPT_DIR/config.yml"
 INTERNET=$(grep "^internet:" "$CONFIG" | awk '{print $2}')
 FEEDBACK=$(grep "^feedback:" "$CONFIG" | awk '{print $2}')
 
+ensure_image
+
 if [[ "$FEEDBACK" == "minimal" ]]; then
-    echo "Building sandbox container..." >&2
+    echo "Launching agent..." >&2
 fi
 
 TOOLS=$(grep "^  tools:" -A 10 "$AGENT_CONFIG" | grep "^  -" | sed 's/^  - //')
@@ -76,10 +86,6 @@ DOCKER_CMD="$DOCKER_CMD -v '$WORKDIR:/workspace'"
 DOCKER_CMD="$DOCKER_CMD -v sandbox-credentials:/home/agent/.config"
 DOCKER_CMD="$DOCKER_CMD -w /workspace"
 DOCKER_CMD="$DOCKER_CMD sandbox:latest"
-
-if [[ "$FEEDBACK" == "minimal" ]]; then
-    echo "Launching agent..." >&2
-fi
 
 TOOLS_ARG=$(echo "$TOOLS" | tr '\n' ',' | sed 's/,$//')
 eval "$DOCKER_CMD" "$AGENT" "$@" --tools "$TOOLS_ARG"

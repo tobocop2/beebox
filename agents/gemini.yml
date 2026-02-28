@@ -1,0 +1,8 @@
+name: gemini
+command: gemini
+install: "npm install -g @google/gemini-cli"
+tools:
+  - beads
+  - floop
+  - docker
+  - git

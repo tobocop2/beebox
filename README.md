@@ -17,11 +17,12 @@ A **lightweight** Docker-based sandbox for running AI coding agents securely.
 
 ## Features
 
-- Multi-agent support (Claude, OpenCode, Codex, Goose)
+- Multi-agent support (Claude, OpenCode, Codex, Goose, Gemini)
 - Tool integration (beads, floop, docker, git)
 - Network isolation option
 - Credential persistence
 - Security hardening (capability dropping)
+- Auto-build Docker image on first run
 
 ## Security
 
@@ -48,3 +49,7 @@ All configuration is in plain YAML files:
 ## Build Progress
 
 This project uses beads for task tracking. Run `bd ready` to see what's ready to work on.
+
+---
+
+> Built with [opencode](https://opencode.ai) and [MiniMax M2.5 Free](https://www.minimax.io)

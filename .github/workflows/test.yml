@@ -1,0 +1,24 @@
+name: Test Sandbox
+
+on: [push, pull_request]
+
+jobs:
+  test-agents:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test Claude
+        run: ./sandbox claude --version
+
+      - name: Test OpenCode
+        run: ./sandbox opencode --version
+
+      - name: Test Codex
+        run: ./sandbox codex --version
+
+      - name: Test Goose
+        run: ./sandbox goose --version
+
+      - name: Test Gemini
+        run: ./sandbox gemini --version

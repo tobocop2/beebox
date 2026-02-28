@@ -1,5 +1,6 @@
 name: goose
 command: goose
+install: "curl -fsSL https://github.com/block/goose/releases/download/stable/download_cli.sh | bash"
 tools:
   - beads
   - floop
