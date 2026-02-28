@@ -1,8 +1,75 @@
-# Agent Instructions
+# AGENTS.md - AI Agent Sandbox
 
-This project uses **bd** (beads) for issue tracking. Run `bd onboard` to get started.
+This project uses [beads](https://github.com/steveyegge/beads) for task tracking
+and [floop](https://github.com/nvandessel/floop) for behavior learning.
 
-## Quick Reference
+## Setup
+
+Run this once to initialize tools:
+```bash
+bd init --quiet
+floop init
+```
+
+## Available Agents
+
+- claude - Anthropic Claude
+- opencode - OpenCode
+- codex - OpenAI Codex  
+- goose - Goose
+
+## Usage
+
+```bash
+./sandbox claude              # Use current directory
+./sandbox -d /path/to/project claude  # Use specific directory
+./sandbox claude "prompt"   # Single prompt
+```
+
+## Tools
+
+- **beads** (bd) - Task tracking
+- **floop** - Behavior corrections
+- **docker** - Docker integration
+- **git** - Git integration
+
+## Git Worktrees
+
+This project uses git worktrees for working on features without disrupting the main codebase:
+
+```bash
+# Create a worktree for a new feature
+git worktree add ../beebox-feature -b feature-branch
+
+# Work on it
+cd ../beebox-feature
+./sandbox claude
+
+# When done, merge and cleanup
+git checkout main
+git merge feature-branch
+git worktree remove ../beebox-feature
+git branch -d feature-branch
+```
+
+## Security
+
+- Capabilities dropped by default
+- Network isolation when internet: false
+- Auto-cleanup on exit
+- Credential persistence in Docker volume
+
+## Build Progress
+
+Use `bd ready` to see what's ready to work on, or `bd list` to see all tasks.
+
+---
+
+## Beads Integration
+
+This project uses **bd (beads)** for issue tracking. Run `bd onboard` to get started.
+
+### Quick Reference
 
 ```bash
 bd ready              # Find available work
@@ -11,79 +78,6 @@ bd update <id> --status in_progress  # Claim work
 bd close <id>         # Complete work
 bd sync               # Sync with git
 ```
-
-<!-- BEGIN BEADS INTEGRATION -->
-## Issue Tracking with bd (beads)
-
-**IMPORTANT**: This project uses **bd (beads)** for ALL issue tracking. Do NOT use markdown TODOs, task lists, or other tracking methods.
-
-### Why bd?
-
-- Dependency-aware: Track blockers and relationships between issues
-- Git-friendly: Auto-syncs to JSONL for version control
-- Agent-optimized: JSON output, ready work detection, discovered-from links
-- Prevents duplicate tracking systems and confusion
-
-### Quick Start
-
-**Check for ready work:**
-
-```bash
-bd ready --json
-```
-
-**Create new issues:**
-
-```bash
-bd create "Issue title" --description="Detailed context" -t bug|feature|task -p 0-4 --json
-bd create "Issue title" --description="What this issue is about" -p 1 --deps discovered-from:bd-123 --json
-```
-
-**Claim and update:**
-
-```bash
-bd update bd-42 --status in_progress --json
-bd update bd-42 --priority 1 --json
-```
-
-**Complete work:**
-
-```bash
-bd close bd-42 --reason "Completed" --json
-```
-
-### Issue Types
-
-- `bug` - Something broken
-- `feature` - New functionality
-- `task` - Work item (tests, docs, refactoring)
-- `epic` - Large feature with subtasks
-- `chore` - Maintenance (dependencies, tooling)
-
-### Priorities
-
-- `0` - Critical (security, data loss, broken builds)
-- `1` - High (major features, important bugs)
-- `2` - Medium (default, nice-to-have)
-- `3` - Low (polish, optimization)
-- `4` - Backlog (future ideas)
-
-### Workflow for AI Agents
-
-1. **Check ready work**: `bd ready` shows unblocked issues
-2. **Claim your task**: `bd update <id> --status in_progress`
-3. **Work on it**: Implement, test, document
-4. **Discover new work?** Create linked issue:
-   - `bd create "Found bug" --description="Details about what was found" -p 1 --deps discovered-from:<parent-id>`
-5. **Complete**: `bd close <id> --reason "Done"`
-
-### Auto-Sync
-
-bd automatically syncs with git:
-
-- Exports to `.beads/issues.jsonl` after changes (5s debounce)
-- Imports from JSONL when newer (e.g., after `git pull`)
-- No manual export/import needed!
 
 ### Important Rules
 
@@ -94,33 +88,3 @@ bd automatically syncs with git:
 - ❌ Do NOT create markdown TODO lists
 - ❌ Do NOT use external issue trackers
 - ❌ Do NOT duplicate tracking systems
-
-For more details, see README.md and docs/QUICKSTART.md.
-
-<!-- END BEADS INTEGRATION -->
-
-## Landing the Plane (Session Completion)
-
-**When ending a work session**, you MUST complete ALL steps below. Work is NOT complete until `git push` succeeds.
-
-**MANDATORY WORKFLOW:**
-
-1. **File issues for remaining work** - Create issues for anything that needs follow-up
-2. **Run quality gates** (if code changed) - Tests, linters, builds
-3. **Update issue status** - Close finished work, update in-progress items
-4. **PUSH TO REMOTE** - This is MANDATORY:
-   ```bash
-   git pull --rebase
-   bd sync
-   git push
-   git status  # MUST show "up to date with origin"
-   ```
-5. **Clean up** - Clear stashes, prune remote branches
-6. **Verify** - All changes committed AND pushed
-7. **Hand off** - Provide context for next session
-
-**CRITICAL RULES:**
-- Work is NOT complete until `git push` succeeds
-- NEVER stop before pushing - that leaves work stranded locally
-- NEVER say "ready to push when you are" - YOU must push
-- If push fails, resolve and retry until it succeeds
