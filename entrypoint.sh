@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
+export PATH="/usr/local/bin:/usr/bin:/bin:$PATH"
+
 AGENT=""
 TOOLS=""
+REMAINING_ARGS=()
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -15,9 +18,15 @@ while [[ $# -gt 0 ]]; do
             break
             ;;
         *)
+            REMAINING_ARGS+=("$1")
             shift
             ;;
     esac
+done
+
+while [[ $# -gt 0 ]]; do
+    REMAINING_ARGS+=("$1")
+    shift
 done
 
 install_tool() {
@@ -28,15 +37,11 @@ install_tool() {
         return 0
     fi
     
-    local install_cmd=$(grep "^install:" "$config" 2>/dev/null | sed 's/^install: *//')
-    local verify_cmd=$(grep "^verify:" "$config" 2>/dev/null | sed 's/^verify: *//')
-    
-    if [[ -n "$verify_cmd" ]]; then
-        eval "$verify_cmd" >/dev/null 2>&1 && return 0
-    fi
+    local install_cmd=$(grep "^install:" "$config" 2>/dev/null | sed 's/^install: *//' | tr -d '"')
     
     if [[ -n "$install_cmd" ]]; then
-        eval "$install_cmd" 2>/dev/null || true
+        echo "Installing $tool..." >&2
+        /bin/bash -c "export PATH=/usr/local/bin:/usr/bin:/bin:\$PATH && $install_cmd" 2>&1 || echo "Warning: $tool install failed" >&2
     fi
 }
 
@@ -50,13 +55,25 @@ install_agent() {
     fi
     
     local command=$(grep "^command:" "$config" 2>/dev/null | sed 's/^command: *//')
-    local install_cmd=$(grep "^install:" "$config" 2>/dev/null | sed 's/^install: *//')
+    local install_cmd=$(grep "^install:" "$config" 2>/dev/null | sed 's/^install: *//' | tr -d '"')
     
-    if [[ -n "$install_cmd" ]]; then
-        eval "$install_cmd" 2>/dev/null || true
+    if command -v "$command" >/dev/null 2>&1; then
+        exec "$command" "${REMAINING_ARGS[@]}"
     fi
     
-    exec "$command" "$@"
+    if [[ -n "$install_cmd" ]]; then
+        echo "Installing $agent..." >&2
+        if /bin/bash -c "export PATH=/usr/local/bin:/usr/bin:/bin:\$PATH && $install_cmd" 2>&1; then
+            exec "$command" "${REMAINING_ARGS[@]}"
+        else
+            echo "Error: Failed to install $agent" >&2
+            echo "You may need to authenticate first. Try running the agent interactively." >&2
+            exit 1
+        fi
+    else
+        echo "Error: $agent not installed and no install command found" >&2
+        exit 1
+    fi
 }
 
 if [[ -n "$TOOLS" ]]; then
@@ -67,7 +84,7 @@ if [[ -n "$TOOLS" ]]; then
 fi
 
 if [[ -n "$AGENT" ]]; then
-    install_agent "$AGENT" "$@"
+    install_agent "$AGENT" "${REMAINING_ARGS[@]}"
 else
-    exec "$@"
+    exec "${REMAINING_ARGS[@]:-bash}"
 fi
