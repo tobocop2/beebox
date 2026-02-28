@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 ensure_image() {
-    if ! docker image inspect sandbox:latest >/dev/null 2>&1; then
+    if ! docker image inspect sandbox >/dev/null 2>&1; then
         echo "Building sandbox container..." >&2
         docker build -t sandbox "$SCRIPT_DIR"
     fi
@@ -83,9 +83,9 @@ if [[ "$INTERNET" != "true" ]]; then
 fi
 
 DOCKER_CMD="$DOCKER_CMD -v '$WORKDIR:/workspace'"
-DOCKER_CMD="$DOCKER_CMD -v sandbox-credentials:/home/agent/.config"
+DOCKER_CMD="$DOCKER_CMD -v sandbox-credentials:/root/.config"
 DOCKER_CMD="$DOCKER_CMD -w /workspace"
-DOCKER_CMD="$DOCKER_CMD sandbox:latest"
+DOCKER_CMD="$DOCKER_CMD sandbox"
 
 TOOLS_ARG=$(echo "$TOOLS" | tr '\n' ',' | sed 's/,$//')
 eval "$DOCKER_CMD" "$AGENT" "$@" --tools "$TOOLS_ARG"
