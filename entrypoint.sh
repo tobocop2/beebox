@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
+
+export PATH="$HOME/.npm-global/bin:$PATH"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 AGENT=""
@@ -37,7 +39,7 @@ install_tool() {
         return 0
     fi
     
-    eval "$install_cmd"
+    eval "$install_cmd" || true
 }
 
 install_agent() {
@@ -53,7 +55,7 @@ install_agent() {
     local install_cmd=$(grep "^install:" "$config" | sed 's/^install: *//')
     
     if [[ -n "$install_cmd" ]]; then
-        eval "$install_cmd"
+        eval "$install_cmd" || true
     fi
     
     exec "$command" "$@"
