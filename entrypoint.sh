@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -uo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 AGENT=""
 TOOLS=""
 
@@ -24,7 +23,7 @@ done
 
 install_tool() {
     local tool="$1"
-    local config="$SCRIPT_DIR/tools/${tool}.yml"
+    local config="/tools/${tool}.yml"
     
     if [[ ! -f "$config" ]]; then
         return 0
@@ -42,7 +41,7 @@ install_tool() {
 
 install_agent() {
     local agent="$1"
-    local config="$SCRIPT_DIR/agents/${agent}.yml"
+    local config="/agents/${agent}.yml"
     
     if [[ ! -f "$config" ]]; then
         echo "Error: No config found for agent: $agent" >&2
