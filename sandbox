@@ -76,7 +76,6 @@ TOOLS=$(grep "^  tools:" -A 10 "$AGENT_CONFIG" | grep "^  -" | sed 's/^  - //')
 
 DOCKER_CMD="docker run --rm"
 DOCKER_CMD="$DOCKER_CMD --cap-drop ALL --cap-add CHOWN --cap-add DAC_OVERRIDE"
-DOCKER_CMD="$DOCKER_CMD --no-new-privileges"
 
 if [[ "$INTERNET" != "true" ]]; then
     DOCKER_CMD="$DOCKER_CMD --network none"
