@@ -33,6 +33,24 @@ floop init
 - **docker** - Docker integration
 - **git** - Git integration
 
+## Git Worktrees
+
+This project uses git worktrees for working on features without disrupting the main codebase:
+
+```bash
+# Create a worktree for a new feature
+git worktree add ../beebox-feature feature-branch
+
+# Work on it
+cd ../beebox-feature
+./sandbox claude
+
+# When done, merge and cleanup
+git checkout master
+git merge feature-branch
+git worktree remove ../beebox-feature
+```
+
 ## Security
 
 - Capabilities dropped by default
