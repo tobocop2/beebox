@@ -8,5 +8,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Build Docker image
+        run: docker build -t sandbox .
+
       - name: Run test suite
         run: ./test.sh
