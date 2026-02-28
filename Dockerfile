@@ -11,15 +11,9 @@ RUN apt-get update && apt-get install -y \
     golang \
     && rm -rf /var/lib/apt/lists/*
 
-RUN npm config set prefix '~/.npm-global' && \
-    echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc
-
-RUN useradd -m -s /bin/bash agent
-
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-USER agent
 WORKDIR /workspace
 
 ENTRYPOINT ["/entrypoint.sh"]
