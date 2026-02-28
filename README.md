@@ -1,13 +1,51 @@
 # AI Agent Sandbox
 
-A **lightweight** Docker-based sandbox for running AI coding agents securely.
+A **Docker-based agent sandbox** for running AI coding agents in a secure, isolated environment.
 
-## Why Lightweight?
+This is a simple, configuration-file-driven way to run common AI agents inside Docker using a single command.
 
-- **No dependencies** - Just bash and Docker
-- **Simple configuration** - Plain YAML files
-- **Minimal overhead** - No orchestration, no extra services
-- **Fast startup** - Plain container, not Kubernetes
+---
+
+## Why This Exists
+
+There are many tools that achieve similar things.
+
+I wanted:
+
+* Something simple
+* Not GUI-based
+* Easy to control via configuration files
+* Built entirely using local AI agents
+
+So I built this.
+
+It’s mostly an excuse to throw a real-world problem at local models and see what they could produce.
+
+I also wanted something I could fully inspect and control without extra services, orchestration layers, or hidden complexity.
+
+---
+
+## How It Works
+
+* Agents run inside isolated Docker containers
+* Everything is controlled via plain YAML configuration files
+* Additional tools (like beads or floop) can be exposed to the sandbox through config
+* No orchestration, no background services, no GUI
+
+Just Docker and bash.
+
+---
+
+## Key Features
+
+* **Secure Isolation**: All agents run in isolated Docker containers with restricted capabilities
+* **Agent Support**: Run multiple AI agents (Claude, OpenCode, Codex, Goose, Gemini)
+* **Tool Integration**: Built-in support for common development tools (git, docker, bash, etc.)
+* **Network Control**: Option to disable internet access for enhanced security
+* **Credential Management**: Persistent credential storage in Docker volumes
+* **Zero Dependencies**: Works with just Docker and bash
+
+---
 
 ## Quick Start
 
@@ -15,41 +53,65 @@ A **lightweight** Docker-based sandbox for running AI coding agents securely.
 ./sandbox claude
 ```
 
-## Features
+---
 
-- Multi-agent support (Claude, OpenCode, Codex, Goose, Gemini)
-- Tool integration (beads, floop, docker, git)
-- Network isolation option
-- Credential persistence
-- Security hardening (capability dropping)
-- Auto-build Docker image on first run
+## Usage Examples
 
-## Security
+```bash
+./sandbox claude                     # Run Claude in current directory
+./sandbox -d /path/to/project claude # Run Claude in specific directory
+./sandbox claude "prompt"            # Run Claude with single prompt
+```
 
-- Capabilities dropped by default
-- Network isolation when internet: false
-- Auto-cleanup on exit
-- Credential storage in Docker volume only
+---
 
 ## Configuration
 
 All configuration is in plain YAML files:
-- `config.yml` - Global settings
-- `agents/*.yml` - Agent definitions
-- `tools/*.yml` - Tool configurations
 
-## Usage
+* `config.yml` – Global settings
+* `agents/*.yml` – Agent definitions
+* `tools/*.yml` – Tool configurations
 
-```bash
-./sandbox claude              # Current directory
-./sandbox -d /path/to/project claude  # Specific directory
-./sandbox claude "prompt"   # Single prompt
-```
+The configuration files expose ways to add additional tools used by the AI agent into the sandbox, like beads or floop, without adding complexity.
 
-## Build Progress
+You can control:
 
-This project uses beads for task tracking. Run `bd ready` to see what's ready to work on.
+* Which agents are available
+* Whether internet access is enabled
+* What tools are mounted into the container
+* How credentials are persisted
+
+Everything is explicit and file-driven.
 
 ---
 
-> Built with [opencode](https://opencode.ai) and [MiniMax M2.5 Free](https://www.minimax.io)
+## Security
+
+* Capabilities dropped by default
+* Network isolation when `internet: false`
+* Auto-cleanup on exit
+* Credential storage in Docker volume only
+
+Security depends on configuration.
+If you mount sensitive host paths or privileged sockets, you reduce isolation.
+
+This is meant to reduce risk and contain mistakes — not eliminate all possible attack surfaces.
+
+---
+
+## Why Lightweight?
+
+* No GUI
+* No orchestration
+* No extra services
+* No hidden layers
+* Fast startup
+* Fully inspectable
+
+Plain container.
+Plain config.
+Single command.
+
+> Entirely built with [OpenCode](https://opencode.ai), [MiniMax M2.5 Free](https://www.minimax.io), [Ollama](https://ollama.com), and [Qwen](https://qwenlm.github.io)
+
