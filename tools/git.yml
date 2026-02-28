@@ -1,3 +1,0 @@
-name: git
-install: "which git"
-verify: "git --version"

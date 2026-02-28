@@ -1,8 +1,3 @@
 name: claude
 command: claude
 install: "npm install -g @anthropic-ai/claude-code"
-tools:
-  - beads
-  - floop
-  - docker
-  - git

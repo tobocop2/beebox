@@ -1,8 +1,3 @@
 name: opencode
 command: opencode
 install: "npm install -g opencode-ai"
-tools:
-  - beads
-  - floop
-  - docker
-  - git

@@ -1,3 +1,0 @@
-name: beads
-install: "curl -fsSL https://beads.dev/install.sh | bash"
-verify: "beads --version"

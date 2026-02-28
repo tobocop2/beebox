@@ -55,6 +55,7 @@ if [[ -z "$AGENT" ]]; then
     usage
 fi
 
+
 AGENT_CONFIG="$SCRIPT_DIR/agents/${AGENT}.yml"
 if [[ ! -f "$AGENT_CONFIG" ]]; then
     echo "Error: Unknown agent: $AGENT"
@@ -72,10 +73,9 @@ if [[ "$FEEDBACK" == "minimal" ]]; then
     echo "Launching agent..." >&2
 fi
 
-TOOLS=$(grep "^  tools:" -A 10 "$AGENT_CONFIG" | grep "^  -" | sed 's/^  - //')
 
-DOCKER_CMD="docker run --rm"
-DOCKER_CMD="$DOCKER_CMD --cap-drop ALL --cap-add CHOWN --cap-add DAC_OVERRIDE"
+DOCKER_CMD="docker run --rm -it"
+DOCKER_CMD="$DOCKER_CMD --cap-drop ALL --cap-add CHOWN --cap-add DAC_OVERRIDE --cap-add FOWNER"
 
 if [[ "$INTERNET" != "true" ]]; then
     DOCKER_CMD="$DOCKER_CMD --network none"
@@ -86,5 +86,4 @@ DOCKER_CMD="$DOCKER_CMD -v sandbox-credentials:/root/.config"
 DOCKER_CMD="$DOCKER_CMD -w /workspace"
 DOCKER_CMD="$DOCKER_CMD sandbox"
 
-TOOLS_ARG=$(echo "$TOOLS" | tr '\n' ',' | sed 's/,$//')
-eval "$DOCKER_CMD" "$AGENT" "$@" --tools "$TOOLS_ARG"
+eval "$DOCKER_CMD" "$AGENT" "$@"

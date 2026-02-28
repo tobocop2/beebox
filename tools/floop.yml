@@ -1,3 +1,0 @@
-name: floop
-install: "go install github.com/nvandessel/floop/cmd/floop@latest"
-verify: "floop --version"
