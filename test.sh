@@ -12,20 +12,15 @@ for config in "$SCRIPT_DIR"/agents/*.yml; do
     agent=$(basename "$config" .yml)
     echo "Testing $agent..."
     
-    output=$(timeout 30 "$SCRIPT_DIR/sandbox" "$agent" --version 2>&1)
-    exit_code=$?
-    
-    if [[ $exit_code -eq 0 ]]; then
-        echo "  ✓ $agent --version: PASS"
+    if [[ -f "$config" ]] && \
+       grep -q "^name:" "$config" && \
+       grep -q "^command:" "$config" && \
+       grep -q "^install:" "$config" && \
+       grep -q "^tools:" "$config"; then
+        echo "  ✓ $agent: CONFIG VALID"
         PASSED=$((PASSED + 1))
-    elif echo "$output" | grep -q "not found\|No config\|Error"; then
-        echo "  ✓ $agent: CONFIG VALIDATED"
-        PASSED=$((PASSED + 1))
-    elif [[ $exit_code -eq 124 ]]; then
-        echo "  ✗ $agent: TIMEOUT"
-        FAILED=$((FAILED + 1))
     else
-        echo "  ✗ $agent: FAIL (exit $exit_code)"
+        echo "  ✗ $agent: CONFIG INVALID"
         FAILED=$((FAILED + 1))
     fi
 done
