@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
     git \
     docker.io \
     golang \
+    bzip2 \
     && rm -rf /var/lib/apt/lists/* \
     && npm cache clean --force
 
