@@ -59,6 +59,15 @@ git branch -d feature-branch
 - Auto-cleanup on exit
 - Credential persistence in Docker volume
 
+## Testing
+
+Run the test suite to validate all agents:
+```bash
+./test.sh
+```
+
+This tests that each agent config is valid and can be invoked.
+
 ## Build Progress
 
 Use `bd ready` to see what's ready to work on, or `bd list` to see all tasks.

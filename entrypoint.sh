@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -uo pipefail
 
 AGENT=""
 TOOLS=""
@@ -29,14 +28,16 @@ install_tool() {
         return 0
     fi
     
-    local install_cmd=$(grep "^install:" "$config" | sed 's/^install: *//')
-    local verify_cmd=$(grep "^verify:" "$config" | sed 's/^verify: *//')
+    local install_cmd=$(grep "^install:" "$config" 2>/dev/null | sed 's/^install: *//')
+    local verify_cmd=$(grep "^verify:" "$config" 2>/dev/null | sed 's/^verify: *//')
     
-    if [[ -n "$verify_cmd" ]] && eval "$verify_cmd" >/dev/null 2>&1; then
-        return 0
+    if [[ -n "$verify_cmd" ]]; then
+        eval "$verify_cmd" >/dev/null 2>&1 && return 0
     fi
     
-    eval "$install_cmd" 2>/dev/null || true
+    if [[ -n "$install_cmd" ]]; then
+        eval "$install_cmd" 2>/dev/null || true
+    fi
 }
 
 install_agent() {
@@ -45,11 +46,11 @@ install_agent() {
     
     if [[ ! -f "$config" ]]; then
         echo "Error: No config found for agent: $agent" >&2
-        return 1
+        exit 1
     fi
     
-    local command=$(grep "^command:" "$config" | sed 's/^command: *//')
-    local install_cmd=$(grep "^install:" "$config" | sed 's/^install: *//')
+    local command=$(grep "^command:" "$config" 2>/dev/null | sed 's/^command: *//')
+    local install_cmd=$(grep "^install:" "$config" 2>/dev/null | sed 's/^install: *//')
     
     if [[ -n "$install_cmd" ]]; then
         eval "$install_cmd" 2>/dev/null || true

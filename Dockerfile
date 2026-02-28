@@ -1,15 +1,12 @@
-FROM ubuntu:22.04
-
-ENV DEBIAN_FRONTEND=noninteractive
+FROM node:22-slim
 
 RUN apt-get update && apt-get install -y \
     curl \
     git \
     docker.io \
-    nodejs \
-    npm \
     golang \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && npm cache clean --force
 
 COPY entrypoint.sh /entrypoint.sh
 COPY agents /agents
