@@ -1,0 +1,7 @@
+name: opencode
+command: opencode
+tools:
+  - beads
+  - floop
+  - docker
+  - git

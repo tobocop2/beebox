@@ -1,0 +1,7 @@
+name: claude
+command: claude
+tools:
+  - beads
+  - floop
+  - docker
+  - git

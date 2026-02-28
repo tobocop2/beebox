@@ -1,0 +1,7 @@
+name: goose
+command: goose
+tools:
+  - beads
+  - floop
+  - docker
+  - git

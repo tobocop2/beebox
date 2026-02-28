@@ -1,0 +1,7 @@
+name: codex
+command: codex
+tools:
+  - beads
+  - floop
+  - docker
+  - git
