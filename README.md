@@ -1,4 +1,4 @@
-# AI Agent Sandbox
+# beebox: Another AI Agent Sandbox
 
 A **Docker-based agent sandbox** for running AI coding agents in a secure, isolated environment.
 
@@ -19,7 +19,7 @@ I wanted:
 
 So I built this.
 
-It’s mostly an excuse to throw a real-world problem at local models and see what they could produce.
+It’s mostly an excuse to throw a real-world problem at free or local models and see what they could produce.
 
 I also wanted something I could fully inspect and control without extra services, orchestration layers, or hidden complexity.
 
@@ -41,7 +41,7 @@ Just Docker and bash.
 * **Agent Support**: Run multiple AI agents (Claude, OpenCode, Codex, Goose, Gemini)
 * **Network Control**: Option to disable internet access for enhanced security
 * **Credential Management**: Persistent credential storage in Docker volumes
-* **Zero Dependencies**: Works with just Docker and bash
+* **Few Dependencies**: Only requires Docker and bash available on your system
 
 ---
 
