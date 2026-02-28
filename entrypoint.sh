@@ -5,9 +5,20 @@ export PATH="$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 AGENT=""
 REMAINING_ARGS=()
 
+# Dynamically extract agent names from agents directory
+AGENT_NAMES=""
+for agent_file in /agents/*.yml; do
+    agent_name=$(basename "$agent_file" .yml)
+    if [[ -n "$AGENT_NAMES" ]]; then
+        AGENT_NAMES="$AGENT_NAMES|$agent_name"
+    else
+        AGENT_NAMES="$agent_name"
+    fi
+done
+
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        claude|opencode|codex|goose|gemini)
+        $AGENT_NAMES)
             AGENT="$1"
             shift
             break
