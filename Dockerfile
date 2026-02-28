@@ -6,6 +6,8 @@ RUN apt-get update && apt-get install -y \
     curl \
     git \
     docker.io \
+    nodejs \
+    npm \
     && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -m -s /bin/bash agent
